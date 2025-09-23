@@ -140,6 +140,7 @@ rec {
             buildOnly
             substituteOnDestination
             tags
+            labels
             ;
           name = n;
           nixosRelease =
@@ -158,6 +159,7 @@ rec {
         meta = {
           description = network.description or "";
           ordering = network.ordering or { };
+          constraints = network.constraints or [ ];
         };
       };
 
@@ -199,5 +201,21 @@ rec {
           )}
         ''
     );
+
+  # phase 3: generate a deployment plan
+
+  #  plans = args@{ plan, ... }:
+  plans =
+    {
+      plan,
+      args ? "",
+      ...
+    }:
+    let
+      planner = import ./planner.nix;
+      args' = if args != "" then builtins.fromJSON (builtins.readFile args) else { };
+    in
+    # Look up the requested $plan first in the deployment, and then fall back to what's provided by Quetzal
+    (network.network.plans."${plan}" or planner.plans."${plan}") args';
 
 }
