@@ -1,0 +1,1 @@
+/home/adtu/src/quetzal-rs/assets/planner.nix
