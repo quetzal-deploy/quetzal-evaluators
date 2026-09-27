@@ -5,8 +5,10 @@
 }:
 
 let
+  flake = builtins.getFlake /home/adtu/deployments;
   wrapper = import ./morph/eval-machines.nix {
-    networkExpr = deployment;
+    # networkExpr = deployment;
+    network = flake.morphDeployments.tools;
   };
 
   setCheckType = type: check: check // { inherit type; };
